@@ -12,6 +12,56 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+
+function CustomerField({
+  icon: Icon,
+  name,
+  label,
+  type = "text",
+  placeholder,
+  required = false,
+  value,
+  error,
+  onChange,
+}) {
+  return (
+    <div>
+      <label
+        className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5"
+        style={{
+          color: "var(--text-3)",
+        }}
+      >
+        {label} {required && <span className="text-red-400">*</span>}
+      </label>
+
+      <div className="relative">
+        <Icon
+          size={16}
+          className="absolute left-3.5 top-3"
+          style={{
+            color: "var(--text-3)",
+          }}
+        />
+
+        <input
+          name={name}
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`theme-input block w-full rounded-xl px-3.5 py-2.5 text-sm pl-10 focus:outline-none focus:ring-2 focus:ring-violet-400 transition-all ${
+            error ? "ring-2 ring-red-400" : ""
+          }`}
+          autoComplete={name === "full_name" ? "name" : name}
+        />
+      </div>
+
+      {error && <p className="mt-1.5 text-xs text-red-400">{error}</p>}
+    </div>
+  );
+}
+
 export default function CustomerForm({ customer, onSuccess }) {
   const isEdit = !!customer;
   const showToast = useToast();
@@ -103,55 +153,6 @@ export default function CustomerForm({ customer, onSuccess }) {
     }
   };
 
-  const fieldClass = (field, extra = "") =>
-    `theme-input block w-full rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition-all ${
-      errors[field] ? "ring-2 ring-red-400" : ""
-    } ${extra}`;
-
-  const Field = ({
-    icon: Icon,
-    name,
-    label,
-    type = "text",
-    placeholder,
-    required = false,
-  }) => (
-    <div>
-      <label
-        className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5"
-        style={{
-          color: "var(--text-3)",
-        }}
-      >
-        {label} {required && <span className="text-red-400">*</span>}
-      </label>
-
-      <div className="relative">
-        <Icon
-          size={16}
-          className="absolute left-3.5 top-3"
-          style={{
-            color: "var(--text-3)",
-          }}
-        />
-
-        <input
-          name={name}
-          type={type}
-          value={form[name]}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={fieldClass(name, "pl-10")}
-          autoComplete={name === "full_name" ? "name" : name}
-        />
-      </div>
-
-      {errors[name] && (
-        <p className="mt-1.5 text-xs text-red-400">{errors[name]}</p>
-      )}
-    </div>
-  );
-
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Form header */}
@@ -210,28 +211,37 @@ export default function CustomerForm({ customer, onSuccess }) {
         </div>
       )}
 
-      <Field
+      <CustomerField
         icon={UserRound}
         name="full_name"
         label="Full Name"
         placeholder="e.g. Yash Yadav"
         required
+        value={form.full_name}
+        error={errors.full_name}
+        onChange={handleChange}
       />
 
-      <Field
+      <CustomerField
         icon={Mail}
         name="email"
         label="Email"
         type="email"
         placeholder="yash@example.com"
         required
+        value={form.email}
+        error={errors.email}
+        onChange={handleChange}
       />
 
-      <Field
+      <CustomerField
         icon={Phone}
         name="phone"
         label="Phone"
         placeholder="+91 7607678680"
+        value={form.phone}
+        error={errors.phone}
+        onChange={handleChange}
       />
 
       {/* Footer */}
